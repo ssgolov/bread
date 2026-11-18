@@ -1,0 +1,15 @@
+# Python (бот)
+bot/.venv/
+__pycache__/
+*.pyc
+
+# старая сборка и устаревшие копии
+dist/
+Bread.html
+
+# macOS
+.DS_Store
+
+# локальные секреты, если появятся
+.env
+*.sqlite3
