@@ -109,13 +109,10 @@
   .ctl-head p{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:var(--muted)}
   .q{font-size:15px;font-weight:550;margin:0 0 12px;letter-spacing:-.1px}
 
-  details.settings{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
-  details.settings summary{cursor:pointer;font-size:13.5px;color:var(--muted);list-style:none;
-    display:flex;align-items:center;gap:7px}
-  details.settings summary::-webkit-details-marker{display:none}
-  details.settings summary::before{content:"⚙";font-size:13px}
-  details.settings .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-  .hint{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.4}
+  /* краткий обзор процесса — внутри карточки планирования */
+  .facts-wrap{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+  .facts-cap{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:10px}
 
   /* ---------------- plan line (collapsed controls) ---------------- */
   .planline{display:flex;align-items:center;gap:10px;justify-content:space-between;
@@ -204,9 +201,17 @@
   .warn + .warn{margin-top:8px}
 
   .callout{background:#faf5ec;border:1px solid var(--line);border-radius:12px;
-    padding:12px 14px;margin:0 0 12px}
+    padding:14px;margin:0 0 6px}
   .callout b{display:block;font-size:14.5px;font-weight:600}
   .callout span{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .callout .btn{width:100%;margin-top:12px;flex:none;min-width:0}
+
+  /* вторичные действия — мелким текстом */
+  .minor{display:flex;justify-content:center;align-items:center;gap:6px;margin:14px 0 40px}
+  .minor button{border:0;background:none;color:var(--muted);font:inherit;font-size:13.5px;
+    text-decoration:underline;cursor:pointer;padding:8px 6px}
+  .minor button:hover{color:var(--accent)}
+  .minor .dot{color:#c9bcae;font-size:12px}
 
   /* ---------------- toast ---------------- */
   .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translate(-50%,14px);
@@ -225,8 +230,9 @@
 
   @media print{
     body{background:#fff;padding:0}
-    .card.controls,.actions,.callout,.nextbar,.live,.toast,.planline,.startwrap{display:none!important}
+    .card.controls,.callout,.minor,.nextbar,.live,.toast,.planline,.startwrap{display:none!important}
     .card{box-shadow:none;border:0;padding:0}
+    .facts-wrap{border-top:0;padding-top:0}
     li.step{break-inside:avoid;opacity:1!important}
     li.step.is-past,li.step.is-now{opacity:1;background:none}
     .chk{display:none}
@@ -277,26 +283,13 @@
     </div>
 
     <div class="seg" role="tablist">
-      <button role="tab" id="tabStart" aria-selected="true">От начала готовки</button>
-      <button role="tab" id="tabBake" aria-selected="false">Ко времени</button>
+      <button role="tab" id="tabBake" aria-selected="true">Ко времени</button>
+      <button role="tab" id="tabStart" aria-selected="false">От начала готовки</button>
     </div>
 
-    <p class="q" id="modeQ">Когда хотите начать готовить?</p>
+    <p class="q" id="modeQ">Когда хотите получить готовый хлеб?</p>
 
-    <div id="paneStart">
-      <div class="row">
-        <div>
-          <label class="fl" for="startDate">Дата старта</label>
-          <input type="date" id="startDate">
-        </div>
-        <div>
-          <label class="fl" for="startTime">Время старта</label>
-          <input type="time" id="startTime" step="300">
-        </div>
-      </div>
-    </div>
-
-    <div id="paneBake" hidden>
+    <div id="paneBake">
       <div class="row">
         <div>
           <label class="fl" for="bakeDate">Хлеб из печи</label>
@@ -309,51 +302,24 @@
       </div>
     </div>
 
-    <details class="settings">
-      <summary id="settingsSummary">Настройки</summary>
-      <div class="grid">
+    <div id="paneStart" hidden>
+      <div class="row">
         <div>
-          <label class="fl" for="levainH">Закваска, ч</label>
-          <input type="number" id="levainH" min="0.5" max="12" step="0.5">
+          <label class="fl" for="startDate">Дата старта</label>
+          <input type="date" id="startDate">
         </div>
         <div>
-          <label class="fl" for="autolyseLead">Аутолиз, мин до</label>
-          <input type="number" id="autolyseLead" min="0" max="300" step="5">
-        </div>
-        <div>
-          <label class="fl" for="rest">Отдых после соли</label>
-          <select id="rest">
-            <option value="30">30 минут</option>
-            <option value="60">60 минут</option>
-          </select>
-        </div>
-        <div>
-          <label class="fl" for="foldsN">Складываний</label>
-          <input type="number" id="foldsN" min="1" max="8" step="1">
-        </div>
-        <div>
-          <label class="fl" for="every">Интервал, мин</label>
-          <input type="number" id="every" min="10" max="120" step="5">
-        </div>
-        <div>
-          <label class="fl" for="bakeOffsetH">Печь через, ч</label>
-          <input type="number" id="bakeOffsetH" min="8" max="30" step="0.5">
-        </div>
-        <div>
-          <label class="fl" for="bakeLen">Выпечка, мин</label>
-          <input type="number" id="bakeLen" min="20" max="180" step="5">
-        </div>
-        <div>
-          <label class="fl" for="windowH">Окно, ч</label>
-          <input type="number" id="windowH" min="0.5" max="6" step="0.5">
+          <label class="fl" for="startTime">Время старта</label>
+          <input type="time" id="startTime" step="300">
         </div>
       </div>
-      <p class="hint">Отдых 30 мин — вариант «17:30 первое», 60 мин — «18:00 первое».</p>
-    </details>
-  </section>
+    </div>
 
-  <section class="card">
-    <div class="facts" id="facts"></div>
+    <div class="facts-wrap">
+      <div class="facts-cap">Что получится</div>
+      <div class="facts" id="facts"></div>
+    </div>
+
     <div id="warnBox"></div>
   </section>
 
@@ -362,11 +328,13 @@
   <div class="callout">
     <b>Напомним про каждый этап</b>
     <span>Нажмите кнопку ниже, чтобы добавить уведомления в календарь.</span>
-  </div>
-  <div class="actions">
     <button class="btn primary" id="btnIcs">В календарь (.ics)</button>
-    <button class="btn" id="btnCopy">Скопировать план</button>
-    <button class="btn" id="btnPrint">Печать</button>
+  </div>
+
+  <div class="minor">
+    <button id="btnCopy">Скопировать план</button>
+    <span class="dot">·</span>
+    <button id="btnPrint">Печать</button>
   </div>
 </div>
 
@@ -465,7 +433,7 @@ const cfg = {
   bakeOffsetH:18, bakeLen:60, windowH:2
 };
 const state = {
-  mode:"start",
+  mode:"bake",
   startDate:null, startTime:"14:00",
   bakeDate:null,  bakeTime:"09:00",
   session:null,            /* { t0: <epoch ms>, startedAt } */
@@ -473,29 +441,37 @@ const state = {
 };
 
 (function defaults(){
-  const now = new Date();
-  const base = new Date(now);
-  if(now.getHours() >= 14) base.setDate(base.getDate()+1);
-  const t = new Date(); t.setDate(t.getDate()+1); t.setHours(9,0,0,0);
-  state.startDate = isoDate(base);
-  state.bakeDate  = isoDate(t);
+  /* по умолчанию — хлеб к 9:00; если начало готовки уже прошло, берём следующий день */
+  const now = Date.now();
+  const offsetMin = cfg.bakeOffsetH*60;
+  const bake = new Date();
+  bake.setDate(bake.getDate()+1);
+  bake.setHours(9,0,0,0);
+  while(bake.getTime() - offsetMin*MIN < now + 30*MIN) bake.setDate(bake.getDate()+1);
+  const start = addMin(bake, -offsetMin);
+  state.bakeDate  = isoDate(bake);
+  state.bakeTime  = "09:00";
+  state.startDate = isoDate(start);
+  state.startTime = hm(start);
 })();
 
 function load(){
   try{
     const raw = JSON.parse(localStorage.getItem(LS) || "{}");
-    if(raw.cfg) Object.assign(cfg, raw.cfg);
     if(raw.state){
       ["mode","startDate","startTime","bakeDate","bakeTime","session","done"].forEach(k=>{
         if(raw.state[k] != null) state[k] = raw.state[k];
       });
     }
+    /* раньше по умолчанию открывался сценарий «От начала готовки» —
+       один раз переключаем на «Ко времени» */
+    if(!raw.v || raw.v < 3) state.mode = "bake";
   }catch(e){}
 }
 function save(){
   try{
     localStorage.setItem(LS, JSON.stringify({
-      cfg,
+      v:3,
       state:{
         mode:state.mode, startDate:state.startDate, startTime:state.startTime,
         bakeDate:state.bakeDate, bakeTime:state.bakeTime,
@@ -602,7 +578,6 @@ function render(){
   renderTimeline(steps);
   renderWarn(start);
   renderNextbar();
-  updateSettingsSummary();
   updateModeHints();
   save();
 }
@@ -614,9 +589,9 @@ function renderStartCard(){
   $("#planLine").hidden = !state.session;
   $("#btnEdit").textContent = editing ? "свернуть" : "изменить";
   if(showStart){
-    const s = parseLocal(state.startDate, state.startTime);
+    const s = cur.start, b = cur.bakeStart;
     $("#startSub").textContent =
-      `Старт ${hm(s)} ${dayLabel(s)} · в печь ${hm(addMin(s, cfg.bakeOffsetH*60))} ${dayLabel(addMin(s, cfg.bakeOffsetH*60))}`;
+      `Старт ${hm(s)} ${dayLabel(s)} · в печь ${hm(b)} ${dayLabel(b)}`;
   }
 }
 
@@ -803,12 +778,6 @@ function renderNextbar(){
   $("#nbCd").textContent = fmtCd(nx.at - now);
 }
 
-function updateSettingsSummary(){
-  const w = cfg.foldsN % 10 === 1 && cfg.foldsN !== 11 ? "складывание" : "складывания";
-  $("#settingsSummary").textContent =
-    `Закваска ${cfg.levainH} ч · отдых ${cfg.rest} мин · ${cfg.foldsN} ${w} через ${cfg.every} мин · печь через ${cfg.bakeOffsetH} ч`;
-}
-
 /* ================= audio ================= */
 let actx = null;
 function unlockAudio(){
@@ -842,7 +811,7 @@ function beep(){
 /* ================= session control ================= */
 $("#btnStart").addEventListener("click", ()=>{
   unlockAudio();
-  const s = parseLocal(state.startDate, state.startTime);
+  const s = computeTimes().start;
   let t0 = s.getTime();
   const now = Date.now();
   if(t0 < now - 15*MIN){
@@ -951,15 +920,6 @@ function syncInputs(){
   $("#startTime").value = state.startTime;
   $("#bakeDate").value  = state.bakeDate;
   $("#bakeTime").value  = state.bakeTime;
-  $("#levainH").value = cfg.levainH;
-  $("#autolyseLead").value = cfg.autolyseLead;
-  $("#rest").value = String(cfg.rest);
-  $("#foldsN").value = cfg.foldsN;
-  $("#every").value = cfg.every;
-  $("#bakeOffsetH").value = cfg.bakeOffsetH;
-  $("#bakeLen").value = cfg.bakeLen;
-  $("#windowH").value = cfg.windowH;
-
   $("#tabStart").setAttribute("aria-selected", state.mode === "start");
   $("#tabBake").setAttribute("aria-selected", state.mode === "bake");
   $("#paneStart").hidden = state.mode !== "start";
@@ -984,16 +944,6 @@ $("#tabBake").addEventListener("click",  ()=>{ state.mode="bake";  syncInputs();
     render();
   }));
 });
-
-[["levainH","levainH"],["autolyseLead","autolyseLead"],["foldsN","foldsN"],
- ["every","every"],["bakeOffsetH","bakeOffsetH"],["bakeLen","bakeLen"],["windowH","windowH"]]
-.forEach(([id,key])=>{
-  $("#"+id).addEventListener("input", e=>{
-    const v = parseFloat(e.target.value);
-    if(!isNaN(v) && v > 0){ cfg[key] = v; render(); }
-  });
-});
-$("#rest").addEventListener("change", e=>{ cfg.rest = parseInt(e.target.value,10); render(); });
 
 /* ================= boot ================= */
 load();
