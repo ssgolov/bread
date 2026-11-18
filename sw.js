@@ -1,6 +1,6 @@
 /* Bread planner — service worker
    Bump VERSION when index.html changes, otherwise the old copy sticks. */
-const VERSION = "bread-v1795013223";
+const VERSION = "bread-v1795013489";
 const SHELL = [
   "./",
   "./index.html",
