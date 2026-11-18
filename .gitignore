@@ -13,3 +13,5 @@ Bread.html
 # локальные секреты, если появятся
 .env
 *.sqlite3
+.pat.tmp
+.pat.json

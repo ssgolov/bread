@@ -71,6 +71,28 @@ Service worker держит файлы в кэше. Если этого не с�
 git add -A && git commit -m "правки" && git push
 ```
 
+Пуш работает без ввода пароля: на этом Mac в связке ключей лежит
+fine-grained токен `bread-push-macbook` (права: Contents — read/write,
+только репозиторий `bread`). Он истекает **16 февраля 2027**.
+
+Когда истечёт, `git push` начнёт отвечать `403` / просить пароль. Тогда:
+
+1. github.com → Settings → Developer settings → **Fine-grained tokens** →
+   у токена `bread-push-macbook` нажать **Regenerate** (или создать новый:
+   only select repositories → `bread`, Contents — Read and write).
+2. Сохранить новый токен в связку ключей:
+
+```bash
+printf "protocol=https\nhost=github.com\nusername=ssgolov\npassword=ТОКЕН\n\n" \
+  | git credential-osxkeychain store
+```
+
+Проверить, что записалось: `git credential-osxkeychain get` (спросит
+protocol/host/username, выведет пароль).
+
+Удалить токен из связки: `git credential-osxkeychain erase` (те же три поля)
+или GitHub → токен → **Delete**.
+
 Pages обновляется за ~1 минуту. Service worker может ещё несколько минут
 отдавать старую копию — версия в `sw.js` к этому моменту уже новая,
 поэтому приложение подхватит её само при следующем открытии.
