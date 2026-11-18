@@ -66,9 +66,9 @@
   .live.past{background:linear-gradient(160deg,#3f4a41,#4b5c4e)}
   .live.done{background:linear-gradient(160deg,#3f5a48,#4b7d5c)}
 
-  .live-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .live-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;justify-content:flex-end}
   .lbtn{
-    flex:1;min-width:104px;padding:10px 12px;border-radius:10px;cursor:pointer;
+    padding:10px 14px;border-radius:10px;cursor:pointer;
     background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);color:#fff;
     font:inherit;font-size:13.5px;font-weight:500;transition:.15s;
   }
@@ -102,11 +102,12 @@
   }
   input:focus,select:focus{outline:2px solid #d9b79b;outline-offset:-1px}
 
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;
-    font:inherit;font-size:13.5px;color:#5c4a3e;cursor:pointer}
-  .chip:hover{border-color:#d3bfa8;background:#fffaf3}
-  .chip.accent{border-color:#e0c3ab;background:#fdf3ea;color:var(--accent)}
+  /* ---------------- planning block heading ---------------- */
+  .ctl-head{margin:0 0 16px}
+  .ctl-head h2{font-family:Georgia,"Times New Roman",serif;font-size:21px;line-height:1.15;
+    margin:0;letter-spacing:-.3px;font-weight:600}
+  .ctl-head p{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:var(--muted)}
+  .q{font-size:15px;font-weight:550;margin:0 0 12px;letter-spacing:-.1px}
 
   details.settings{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
   details.settings summary{cursor:pointer;font-size:13.5px;color:var(--muted);list-style:none;
@@ -200,6 +201,12 @@
   .warn{background:#fdf3e7;border:1px solid #f0d9bd;color:#8a5a25;border-radius:10px;
     padding:10px 12px;font-size:13px;margin-top:14px}
   .warn strong{font-weight:600}
+  .warn + .warn{margin-top:8px}
+
+  .callout{background:#faf5ec;border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;margin:0 0 12px}
+  .callout b{display:block;font-size:14.5px;font-weight:600}
+  .callout span{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
 
   /* ---------------- toast ---------------- */
   .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translate(-50%,14px);
@@ -218,7 +225,7 @@
 
   @media print{
     body{background:#fff;padding:0}
-    .card.controls,.actions,.nextbar,.live,.toast,.planline,.startwrap{display:none!important}
+    .card.controls,.actions,.callout,.nextbar,.live,.toast,.planline,.startwrap{display:none!important}
     .card{box-shadow:none;border:0;padding:0}
     li.step{break-inside:avoid;opacity:1!important}
     li.step.is-past,li.step.is-now{opacity:1;background:none}
@@ -244,9 +251,6 @@
       <div class="cdcap" id="liveCdCap">до следующего шага</div>
     </div>
     <div class="live-actions">
-      <button class="lbtn" id="btnSound" aria-pressed="true">🔔 Звук</button>
-      <button class="lbtn" id="btnWake" aria-pressed="false">💡 Экран</button>
-      <button class="lbtn" id="btnTimers">⏱ Таймеры</button>
       <button class="lbtn" id="btnReset">✕ Сброс</button>
     </div>
   </section>
@@ -266,10 +270,18 @@
   </div>
 
   <section class="card controls" id="controlsCard">
-    <div class="seg" role="tablist">
-      <button role="tab" id="tabStart" aria-selected="true">От старта</button>
-      <button role="tab" id="tabBake" aria-selected="false">К выпечке</button>
+    <div class="ctl-head">
+      <h2>Планирование выпечки</h2>
+      <p>Весь процесс занимает <span id="planLeadDur">19 часов</span>. Можно спланировать так,
+        чтобы хлеб был готов к определённому времени — или от удобного времени начала готовки.</p>
     </div>
+
+    <div class="seg" role="tablist">
+      <button role="tab" id="tabStart" aria-selected="true">От начала готовки</button>
+      <button role="tab" id="tabBake" aria-selected="false">Ко времени</button>
+    </div>
+
+    <p class="q" id="modeQ">Когда хотите начать готовить?</p>
 
     <div id="paneStart">
       <div class="row">
@@ -295,13 +307,6 @@
           <input type="time" id="bakeTime" step="300">
         </div>
       </div>
-    </div>
-
-    <div class="chips" id="chips">
-      <button class="chip" data-preset="now">Сейчас</button>
-      <button class="chip" data-preset="14">Старт 14:00</button>
-      <button class="chip" data-preset="16">Старт 16:00</button>
-      <button class="chip accent" data-preset="bake9">Хлеб к 9:00</button>
     </div>
 
     <details class="settings">
@@ -354,17 +359,13 @@
 
   <div id="timelineWrap"></div>
 
-  <div class="actions">
-    <button class="btn primary" id="btnTimers2">⏱ Таймеры в iPhone</button>
-    <button class="btn" id="btnAlisa">Фразы для Алисы</button>
+  <div class="callout">
+    <b>Напомним про каждый этап</b>
+    <span>Нажмите кнопку ниже, чтобы добавить уведомления в календарь.</span>
   </div>
   <div class="actions">
-    <button class="btn" id="btnIcs">В календарь (.ics)</button>
+    <button class="btn primary" id="btnIcs">В календарь (.ics)</button>
     <button class="btn" id="btnCopy">Скопировать план</button>
-  </div>
-  <div class="actions">
-    <button class="btn" id="btnExport">Экспорт</button>
-    <button class="btn" id="btnImport">Импорт</button>
     <button class="btn" id="btnPrint">Печать</button>
   </div>
 </div>
@@ -380,7 +381,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<input type="file" id="fileIn" accept="application/json,.json" hidden>
 
 <script>
 (function(){
@@ -444,6 +444,11 @@ function dayLabel(d){
 function fullDate(d){
   return new Intl.DateTimeFormat("ru-RU",{day:"numeric",month:"long",weekday:"short"}).format(d);
 }
+/* "ночью надо спать" — с 23:00 до 06:00 */
+function isNight(d){
+  const h = d.getHours();
+  return h >= 23 || h < 6;
+}
 let toastTimer = null;
 function toast(msg){
   const t = $("#toast");
@@ -463,7 +468,7 @@ const state = {
   mode:"start",
   startDate:null, startTime:"14:00",
   bakeDate:null,  bakeTime:"09:00",
-  session:null,            /* { t0: <epoch ms>, startedAt, sound:bool, wake:bool } */
+  session:null,            /* { t0: <epoch ms>, startedAt } */
   done:{}
 };
 
@@ -598,6 +603,7 @@ function render(){
   renderWarn(start);
   renderNextbar();
   updateSettingsSummary();
+  updateModeHints();
   save();
 }
 
@@ -671,13 +677,8 @@ function renderLive(){
 
   /* beep when the stage changes while the app is open */
   const stageId = iCur < 0 ? "pre" : steps[iCur].id;
-  if(lastStageId !== null && stageId !== lastStageId){
-    if(state.session.sound !== false) beep();
-  }
+  if(lastStageId !== null && stageId !== lastStageId) beep();
   lastStageId = stageId;
-
-  $("#btnSound").setAttribute("aria-pressed", state.session.sound !== false);
-  $("#btnWake").setAttribute("aria-pressed", !!state.session.wake);
 }
 
 function renderFacts(start, bakeStart, steps){
@@ -747,18 +748,30 @@ function renderTimeline(steps){
 function renderWarn(start){
   const box = $("#warnBox");
   const now = Date.now();
+  const msgs = [];
+
   if(state.session){
     const end = addMin(cur.bakeStart, cfg.bakeLen).getTime();
     if(now > end + 12*HOUR){
-      box.innerHTML = `<div class="warn"><strong>Это план от ${dayLabel(start)}.</strong>
-        Похоже, выпечка уже давно прошла. Нажмите «Сброс» и поставьте новый старт.</div>`;
-    }else{ box.innerHTML = ""; }
-    return;
+      msgs.push(`<strong>Это план от ${dayLabel(start)}.</strong>
+        Похоже, выпечка уже давно прошла. Нажмите «Сброс» и поставьте новый старт.`);
+    }
+  }else if(start.getTime() < now - 3*HOUR){
+    msgs.push(`Старт уже прошёл (${hm(start)}, ${dayLabel(start)}).
+      Сдвиньте время или переключитесь в «Ко времени».`);
   }
-  if(start.getTime() < now - 3*HOUR){
-    box.innerHTML = `<div class="warn">Старт уже прошёл (${hm(start)}, ${dayLabel(start)}).
-      Сдвиньте время или переключитесь в «К выпечке».</div>`;
-  }else{ box.innerHTML = ""; }
+
+  /* nothing should have to happen between 23:00 and 06:00 */
+  const night = cur.steps.filter(s=> s.kind !== "chill" && isNight(s.at));
+  if(night.length){
+    const list = night.map(s=> `${hm(s.at)} — ${s.title.toLowerCase()}`).join("; ");
+    const what = state.mode === "start" ? "время начала готовки" : "время выпечки";
+    msgs.push(`<strong>Ночью надо спать 🌙</strong>
+      В интервал 23:00–06:00 попадают: ${list}.
+      Сдвиньте ${what} — и все шаги переедут на день.`);
+  }
+
+  box.innerHTML = msgs.map(m=> `<div class="warn">${m}</div>`).join("");
 }
 
 function renderNextbar(){
@@ -826,26 +839,6 @@ function beep(){
   if(navigator.vibrate) navigator.vibrate([90,70,90]);
 }
 
-/* ================= wake lock ================= */
-let wakeLock = null;
-async function acquireWake(){
-  try{
-    if(!("wakeLock" in navigator)){ toast("Wake Lock не поддерживается"); return false; }
-    if(document.visibilityState !== "visible") return false;
-    wakeLock = await navigator.wakeLock.request("screen");
-    wakeLock.addEventListener("release", ()=>{ /* re-acquired on visibility change */ });
-    return true;
-  }catch(e){ return false; }
-}
-function releaseWake(){
-  try{ if(wakeLock){ wakeLock.release(); wakeLock = null; } }catch(e){}
-}
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "visible" && state.session && state.session.wake){
-    acquireWake();
-  }
-});
-
 /* ================= session control ================= */
 $("#btnStart").addEventListener("click", ()=>{
   unlockAudio();
@@ -856,13 +849,12 @@ $("#btnStart").addEventListener("click", ()=>{
     t0 = now;
     toast("Время старта было в прошлом — начали с текущего момента");
   }
-  state.session = { t0, startedAt: now, sound: true, wake: false };
+  state.session = { t0, startedAt: now };
   state.done = {};
   editing = false;
   lastStageId = null;
   render();
   toast("План запущен. Следите за полосой прогресса");
-  if(state.session.wake) acquireWake();
 });
 
 $("#btnEdit").addEventListener("click", ()=>{
@@ -873,20 +865,11 @@ $("#btnEdit").addEventListener("click", ()=>{
   }
 });
 
-$("#btnSound").addEventListener("click", ()=>{
-  if(!state.session) return;
-  unlockAudio();
-  state.session.sound = state.session.sound === false ? true : false;
-  render();
-  if(state.session.sound) beep();
-});
-
 $("#btnReset").addEventListener("click", ()=>{
   const ok = window.confirm
     ? window.confirm("Сбросить текущую выпечку? План вернётся к настройкам.")
     : true;
   if(!ok) return;
-  releaseWake();
   state.session = null;
   state.done = {};
   lastStageId = null;
@@ -896,66 +879,7 @@ $("#btnReset").addEventListener("click", ()=>{
   toast("Сброшено");
 });
 
-$("#btnWake").addEventListener("click", async ()=>{
-  if(!state.session) return;
-  if(state.session.wake){
-    state.session.wake = false;
-    releaseWake();
-  }else{
-    state.session.wake = true;
-    const ok = await acquireWake();
-    if(!ok) state.session.wake = false;
-  }
-  render();
-});
-
-/* ================= Shortcuts / Alisa ================= */
-function pendingFolds(){
-  const now = Date.now();
-  return cur.steps.filter(s=> s.kind === "fold" && s.at.getTime() > now + 30*1000);
-}
-/* Minutes from now — the Shortcut only has to start N timers. */
-function foldDurations(){
-  const now = Date.now();
-  return pendingFolds().map(s=> Math.max(1, Math.round((s.at.getTime()-now)/MIN)));
-}
-function timersUrl(){
-  const dur = foldDurations().join(",");
-  const name = "Хлеб таймеры";
-  return `shortcuts://run-shortcut?name=${encodeURIComponent(name)}&input=text&text=${encodeURIComponent(dur)}`;
-}
-function timers(){
-  const d = foldDurations();
-  if(!d.length){ toast("Складывания уже прошли"); return; }
-  const a = document.createElement("a");
-  a.href = timersUrl();
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  toast(`Команда запущена · ${d.length} таймера: ${d.join(", ")} мин`);
-}
-$("#btnTimers").addEventListener("click", timers);
-$("#btnTimers2").addEventListener("click", timers);
-
-$("#btnAlisa").addEventListener("click", async ()=>{
-  const steps = cur.steps;
-  const folds = steps.filter(s=>s.kind==="fold");
-  const bake = cur.bakeStart;
-  const lines = [
-    "Фразы для Алисы (по порядку):",
-    `1. «Алиса, поставь таймер на ${durPhrase(cfg.levainH*60)}»   ← закваска`,
-    `2. «Алиса, поставь таймер на ${durPhrase(cfg.autolyseLead)}»   ← аутолиз`,
-    `3. «Алиса, поставь таймер на ${durPhrase(cfg.rest)}»   ← отдых после соли`,
-    `4. «Алиса, поставь таймер на ${durPhrase(cfg.every)}»   ← складывание 1`,
-    `5. «Алиса, повтори таймер»   ← складывание 2`,
-    `6. «Алиса, повтори таймер»   ← складывание 3`,
-    `7. «Алиса, повтори таймер»   ← складывание 4`,
-    `8. «Алиса, напомни завтра в ${hm(bake)} поставить хлеб в печь»`
-  ];
-  await copyText(lines.join("\n"), "Фразы скопированы");
-});
-
-/* ================= export ================= */
+/* ================= copy / print ================= */
 async function copyText(text, okMsg){
   try{
     await navigator.clipboard.writeText(text);
@@ -1003,7 +927,7 @@ $("#btnIcs").addEventListener("click", ()=>{
       `DTEND:${icsDate(end)}`,
       `SUMMARY:${icsEscape("Хлеб · " + s.title)}`,
       `DESCRIPTION:${icsEscape((s.meta||"") + (s.note ? "\n" + s.note : ""))}`,
-      "BEGIN:VALARM","TRIGGER:-PT5M","ACTION:DISPLAY",
+      "BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY",
       `DESCRIPTION:${icsEscape("Хлеб · " + s.title)}`,
       "END:VALARM","END:VEVENT");
   });
@@ -1020,32 +944,6 @@ function download(blob, name){
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
 }
-
-$("#btnExport").addEventListener("click", ()=>{
-  const data = { version:2, exportedAt:new Date().toISOString(), cfg, state };
-  download(new Blob([JSON.stringify(data,null,2)], {type:"application/json"}),
-           `bread-backup-${isoDate(new Date())}.json`);
-  toast("Резервная копия сохранена");
-});
-$("#btnImport").addEventListener("click", ()=> $("#fileIn").click());
-$("#fileIn").addEventListener("change", async (e)=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
-  try{
-    const data = JSON.parse(await f.text());
-    if(data.cfg) Object.assign(cfg, data.cfg);
-    if(data.state){
-      ["mode","startDate","startTime","bakeDate","bakeTime","session","done"]
-        .forEach(k=>{ if(data.state[k] != null) state[k] = data.state[k]; });
-    }
-    lastStageId = null;
-    syncInputs(); render();
-    toast("План восстановлен");
-  }catch(err){
-    toast("Не удалось прочитать файл");
-  }
-  e.target.value = "";
-});
 
 /* ================= controls ================= */
 function syncInputs(){
@@ -1068,6 +966,14 @@ function syncInputs(){
   $("#paneBake").hidden  = state.mode !== "bake";
 }
 
+/* заголовок-подсказка и длительность под табами */
+function updateModeHints(){
+  $("#modeQ").textContent = state.mode === "start"
+    ? "Когда хотите начать готовить?"
+    : "Когда хотите получить готовый хлеб?";
+  $("#planLeadDur").textContent = durPhrase(cfg.bakeOffsetH*60 + cfg.bakeLen);
+}
+
 $("#tabStart").addEventListener("click", ()=>{ state.mode="start"; syncInputs(); render(); });
 $("#tabBake").addEventListener("click",  ()=>{ state.mode="bake";  syncInputs(); render(); });
 
@@ -1088,35 +994,6 @@ $("#tabBake").addEventListener("click",  ()=>{ state.mode="bake";  syncInputs();
   });
 });
 $("#rest").addEventListener("change", e=>{ cfg.rest = parseInt(e.target.value,10); render(); });
-
-$("#chips").addEventListener("click", e=>{
-  const btn = e.target.closest("[data-preset]");
-  if(!btn) return;
-  const p = btn.dataset.preset;
-  const now = new Date();
-  if(p === "now"){
-    const d = new Date(now);
-    d.setMinutes(Math.ceil(d.getMinutes()/15)*15, 0, 0);
-    state.mode = "start"; state.startDate = isoDate(d); state.startTime = hm(d);
-  }
-  if(p === "14" || p === "16"){
-    const t = p === "14" ? 14 : 16;
-    const d = new Date(now);
-    if(now.getHours() >= t) d.setDate(d.getDate()+1);
-    d.setHours(t,0,0,0);
-    state.mode = "start"; state.startDate = isoDate(d); state.startTime = hm(d);
-  }
-  if(p === "bake9"){
-    const d = new Date(now);
-    d.setDate(d.getDate()+1); d.setHours(9,0,0,0);
-    if(addMin(d, -cfg.bakeOffsetH*60) < now) d.setDate(d.getDate()+1);
-    state.mode = "bake"; state.bakeDate = isoDate(d); state.bakeTime = "09:00";
-  }
-  state.session = null;
-  lastStageId = null;
-  syncInputs();
-  render();
-});
 
 /* ================= boot ================= */
 load();
